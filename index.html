@@ -333,7 +333,7 @@ function startGame(){
 song.addEventListener("ended", () => {
   if(!started) return;
   started = false;
-  const requiredScore = 2000;
+  const requiredScore = 2000; // tweak difficulty
   if(score >= requiredScore){
     document.getElementById("winScreen").style.display = "flex";
     document.getElementById("proposalAnim").style.opacity = 1;
@@ -351,17 +351,25 @@ function tap(){
   for(let i = 0; i < notes.length; i++){
     const n = notes[i];
     const diff = Math.abs(n.time - current);
-    if(diff < 120){
+
+    if(diff < 180){             // wider PERFECT window
       score += 100;
       combo++;
       showPopup("PERFECT 💖");
       notes.splice(i, 1);
       hit = true;
       break;
-    }else if(diff < 250){
+    }else if(diff < 320){       // wider GOOD window
       score += 50;
       combo++;
       showPopup("GOOD 💕");
+      notes.splice(i, 1);
+      hit = true;
+      break;
+    }else if(diff < 450){       // extra OK window
+      score += 20;
+      combo = 0;
+      showPopup("OK 💓");
       notes.splice(i, 1);
       hit = true;
       break;
@@ -399,7 +407,7 @@ function loop(){
 
     const current = song.currentTime * 1000;
 
-    // Spawn notes SCROLL_AHEAD ms before their hit time
+    // Spawn notes SCROLL_AHEAD ms before their intended hit time
     while(current + SCROLL_AHEAD >= nextNoteTime &&
           !isNaN(song.duration) &&
           current < song.duration * 1000){
